@@ -1,0 +1,31 @@
+{
+  "name": "final-food",
+  "version": "1.0.0",
+  "description": "final project for backend development course",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "setup": "node database/setup.js",
+    "seed": "node database/seed.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nori0507/final-food.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nori0507/final-food/issues"
+  },
+  "homepage": "https://github.com/nori0507/final-food#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "sequelize": "^6.37.8",
+    "sqlite3": "^6.0.1"
+  }
+}

@@ -3,7 +3,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 // Order Model
 module.exports = (sequelize, DataTypes) => {
     const Order = db.define('Order', {
-        orderid: {
+        orderID: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true

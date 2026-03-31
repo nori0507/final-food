@@ -15,21 +15,21 @@ const Menu = require('./models/Menu')(db, DataTypes);
 const Order = require('./models/Order')(db, DataTypes);
 
 // Relationships
-Users.hasMany(Restaurant, { foreignKey: 'ownerId' });
-Restaurant.belongsTo(Users, { foreignKey: 'ownerId' });
+Users.hasMany(Restaurant, { foreignKey: 'ownerID' });
+Restaurant.belongsTo(Users, { foreignKey: 'ownerID' });
 
-Users.hasMany(Order, { foreignKey: 'customerId' }); 
-Order.belongsTo(Users, { foreignKey: 'customerId' }); 
+Users.hasMany(Order, { foreignKey: 'customerID' }); 
+Order.belongsTo(Users, { foreignKey: 'customerID' }); 
 
-Restaurant.hasMany(Menu, { foreignKey: 'restaurantId', onDelete: 'CASCADE' });
-Menu.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
+Restaurant.hasMany(Menu, { foreignKey: 'restaurantID', onDelete: 'CASCADE' });
+Menu.belongsTo(Restaurant, { foreignKey: 'restaurantID' });
 
-Restaurant.hasMany(Order, { foreignKey: 'restaurantId' });
-Order.belongsTo(Restaurant, { foreignKey: 'restaurantId' });
+Restaurant.hasMany(Order, { foreignKey: 'restaurantID' });
+Order.belongsTo(Restaurant, { foreignKey: 'restaurantID' });
 
 // Many-to-Many for Order Items
-Order.belongsToMany(Menu, { through: 'OrderItems', foreignKey: 'orderId' });
-Menu.belongsToMany(Order, { through: 'OrderItems', foreignKey: 'menuId' });
+Order.belongsToMany(Menu, { through: 'OrderItems', foreignKey: 'orderID' });
+Menu.belongsToMany(Order, { through: 'OrderItems', foreignKey: 'menuID' });
 
 
 // Initialize database

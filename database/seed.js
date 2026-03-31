@@ -18,7 +18,7 @@ const seedDatabase = async () => {
             role: 'admin'
         });
 
-        const owner = await Users.create({
+        const owner1 = await Users.create({
             name: 'Bob Burger',
             email: 'bob@burgers.com',
             password: 'hashed_password_123',
@@ -26,6 +26,17 @@ const seedDatabase = async () => {
             address: '456 Grill St',
             phone: 5550202,
             dcard: 33334444,
+            role: 'owner'
+        });
+
+        const owner2 = await Users.create({
+            name: 'Miyu Sushi',
+            email: 'miyu@sushi.com',
+            password: 'hashed_password_456',
+            bday: '1992-03-15',
+            address: '321 Rice Road',
+            phone: 5550808,
+            dcard: 77778888,
             role: 'owner'
         });
 
@@ -40,22 +51,30 @@ const seedDatabase = async () => {
             role: 'customer'
         });
 
-        // Create a Restaurant (Linked to Owner)
+        // Create Restaurants (linked to Owners)
         const myRestaurant = await Restaurant.create({
             name: "Bob's Brilliant Burgers",
             address: "101 Patty Way",
             food_type: "American",
             phone: 5559999,
-            ownerId: owner.userID // Linking to the owner we just created
+            ownerID: owner1.usersID // Linking to the owner1 we just created
         });
 
-        // Create Menu Items (Linked to Restaurant)
+        const secondRestaurant = await Restaurant.create({
+            name: "Miyu's Midnight Ramen",
+            address: "888 Noodle Blvd",
+            food_type: "Japanese",
+            phone: 5557777,
+            ownerID: owner2.usersID 
+        });
+
+        // Create Menu Items (linked to Restaurants)
         const item1 = await Menu.create({
             name: "Classic Cheeseburger",
             ingredients: "Beef, Cheddar, Lettuce, Tomato",
             description: "A timeless favorite.",
             price: 12,
-            restaurantId: myRestaurant.restaurantId
+            restaurantID: myRestaurant.restaurantID // Linking to the first restaurant that we just created
         });
 
         const item2 = await Menu.create({
@@ -63,7 +82,7 @@ const seedDatabase = async () => {
             ingredients: "Potatoes, Cajun Spice",
             description: "Spicy and crispy.",
             price: 5,
-            restaurantId: myRestaurant.restaurantId
+            restaurantID: myRestaurant.restaurantID
         });
 
         const item3 = await Menu.create({
@@ -71,7 +90,15 @@ const seedDatabase = async () => {
             ingredients: "Milk, Vanilla Bean",
             description: "Creamy and cold.",
             price: 6,
-            restaurantId: myRestaurant.restaurantId
+            restaurantID: myRestaurant.restaurantID
+        });
+
+        const item4 = await Menu.create({ // only this one is from the second restaurant
+            name: "Spicy Tonkotsu Ramen",
+            ingredients: "Pork Broth, Ramen Noodles, Chashu, Egg",
+            description: "Hearty and spicy noodle soup.",
+            price: 16,
+            restaurantID: secondRestaurant.restaurantID 
         });
 
         // Create an Order (Many-to-Many)
@@ -79,8 +106,8 @@ const seedDatabase = async () => {
         const myOrder = await Order.create({
             est_delivery_min: 25,
             order_status: 'preparing',
-            customerId: customer.userID,
-            restaurantId: myRestaurant.restaurantId
+            customerID: customer.usersID,
+            restaurantID: myRestaurant.restaurantID
         });
 
         // Connect items to the order using the Join Table (OrderItems)

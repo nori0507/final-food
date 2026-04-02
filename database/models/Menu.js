@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 // Menu Model
 module.exports = (sequelize, DataTypes) => {
-    const Menu = db.define('Menu', {
+    const Menu = sequelize.define('Menu', {
         menuID: {
             type: DataTypes.INTEGER,
             primaryKey: true,

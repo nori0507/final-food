@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
-const { db, User, Project, Task } = require('./database/setup');
+const { db, Users, Restaurant, Menu, Order } = require('./database/setup');
 require('dotenv').config();
 
 const app = express();
@@ -485,8 +485,12 @@ app.use((err, req, res, next) => {
   // Highlight error
   console.error(err.stack);
   // Send a respond to the user
-  res.status(500).json({ error: "Unexpected Error Occured: Action Failed" });
+  res.status(500).json({ error: "Unexpected Error Occured: Action Failed", message: err.message });
+  
 });
+
+
+
 
 // Start the surver
 app.listen(PORT, () => console.log(`MVP running at http://localhost:${PORT}`));

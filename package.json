@@ -22,9 +22,12 @@
   },
   "homepage": "https://github.com/nori0507/final-food#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "jsonwebtoken": "^9.0.3",
     "sequelize": "^6.37.8",
     "sqlite3": "^6.0.1"
   }

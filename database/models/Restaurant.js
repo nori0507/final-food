@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 // restaurant Model
 module.exports = (sequelize, DataTypes) => {
-    const Restaurant = db.define('Restaurant', {
+    const Restaurant = sequelize.define('Restaurant', {
         restaurantID: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -22,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         phone: {
-            type: DataTypes.INTERGER,
-            allowNull: false,
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
     });
       return Restaurant;

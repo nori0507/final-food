@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('./server'); 
-const { db } = require('./database/setup'); 
+const app = require('../server'); 
+const { db } = require('../database/setup'); 
 
 describe('Food Delivery API CRUD Tests', () => {
     
@@ -102,7 +102,7 @@ describe('Food Delivery API CRUD Tests', () => {
                 });
 
             expect(response.status).toBe(400);
-            expect(response.body.error).toBe("Missing some fields");
+            expect(response.body.error).toBe("All fields are required: name, address, food_type, and phone.");
         });
     });
 
@@ -118,7 +118,7 @@ describe('Food Delivery API CRUD Tests', () => {
                 ingredients: "Noodles, Broth, Pork, Egg",
                 description: "Traditional spicy tonkotsu ramen",
                 price: 15.50,
-                restaurantID: 2
+                restaurantID: 1
             };
 
             const response = await request(app)
@@ -142,7 +142,7 @@ describe('Food Delivery API CRUD Tests', () => {
                 });
 
             expect(response.status).toBe(400);
-            expect(response.body.error).toBe("Some fields are missing");
+            expect(response.body.error).toBe("All fields are required: name, ingredients, description, price, and restaurantID.");
         });
     });
 
@@ -190,7 +190,7 @@ describe('Food Delivery API CRUD Tests', () => {
                 });
             
             expect(response.status).toBe(400);
-            expect(response.body.error).toBe("All items that you order must be from the same restaurant.");
+            expect(response.body.error).toBe("One or more selected menu items do not exist.");
         });
     });
 

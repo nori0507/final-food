@@ -139,4 +139,4 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 # Ignore the ghost file
-task-management.db
+task_management.db

@@ -224,7 +224,7 @@ app.post('/api/menus', async (req, res, next) => {
         // Return the new menu whne succeeded
         res.status(201).json(newMenu);
 
-    } catch (err) { // Return an error
+    } catch (error) { // Return an error
         next(error);
     }
 });
@@ -490,10 +490,10 @@ app.use((err, req, res, next) => {
 });
 
 
-
-
-// Start the surver
-app.listen(PORT, () => console.log(`MVP running at http://localhost:${PORT}`));
-
 // exproting module so that we can ue the function in different files
 module.exports = app;
+
+// Start the surver
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(3000, () => console.log('MVP running at http://localhost:3000'));
+}

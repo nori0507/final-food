@@ -4,7 +4,7 @@ require('dotenv').config();
 // Initialize database connection
 const db = new Sequelize({
     dialect: process.env.DB_TYPE,
-    storage: `database/${process.env.DB_NAME}` || 'database/company_projects.db',
+    storage: `database/${process.env.DB_NAME}` || 'database/finalfood.db',
     logging: false
 });
 
@@ -24,7 +24,7 @@ Order.belongsTo(Users, { foreignKey: 'customerID' });
 Restaurant.hasMany(Menu, { foreignKey: 'restaurantID', onDelete: 'CASCADE' });
 Menu.belongsTo(Restaurant, { foreignKey: 'restaurantID' });
 
-Restaurant.hasMany(Order, { foreignKey: 'restaurantID' });
+Restaurant.hasMany(Order, { foreignKey: 'restaurantID', onDelete: 'CASCADE' });
 Order.belongsTo(Restaurant, { foreignKey: 'restaurantID' });
 
 // Many-to-Many for Order Items

@@ -8,20 +8,77 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// adding cors package and using it as a part of the middleware
+const cors = require('cors');
+app.use(cors());
+
 // Middleware
 app.use(express.json());
 
-// Middleware for the log in session
-app.use(session({
-    secret: process.env.SESSION_SECRET,// this is in my .env file
-    resave: false, // so that this will not be saved
-    saveUninitialized: false,
-    cookie: { 
-        secure: false,
-        maxAge: 24 * 60 * 60 * 1000
+// replacing the session middleware with JWT middleware
+function requireAuth(req, res, next) {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'No token provided' });
     }
-}));
+    
+    const token = authHeader.substring(7);
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        req.user = {
+            id: decoded.id,
+            name: decoded.name,
+            email: decoded.email,
+            role: decoded.role
+        };
+        
+        next();
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: 'Token expired' });
+        } else if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ error: 'Invalid token' });
+        } else {
+            return res.status(401).json({ error: 'Token verification failed' });
+        }
+    }
+}
 
+// Authorization for Customer
+function requireCustomer(req, res, next) {
+    if (!req.user) return res.status(401).json({ error: 'Authentication required' });
+
+    if (req.user.role === 'customer') {
+        next();
+    } else {
+        return res.status(403).json({ error: 'Access denied. Customer role required.' });
+    }
+}
+
+// Authorization for Owner
+function requireOwner(req, res, next) {
+    if (!req.user) return res.status(401).json({ error: 'Authentication required' });
+
+    if (req.user.role === 'owner') {
+        next();
+    } else {
+        return res.status(403).json({ error: 'Access denied. Owner role required.' });
+    }
+}
+
+// Authorization for Admin
+function requireAdmin(req, res, next) {
+    if (!req.user) return res.status(401).json({ error: 'Authentication required' });
+
+    if (req.user.role === 'admin') {
+        next();
+    } else {
+        return res.status(403).json({ error: 'Access denied. Admin role required.' });
+    }
+}
 
 // Test database connection
 async function testConnection() {
@@ -36,13 +93,13 @@ async function testConnection() {
 testConnection();
 
 // GET All Restaurants
-app.get('/api/restaurants', async (req, res) => {
+app.get('/api/restaurants', requireAuth,async (req, res) => {
     const data = await Restaurant.findAll();
     res.json(data);
 });
 
 // GET All Menus
-app.get('/api/menus', async (req, res) => {
+app.get('/api/menus',requireAuth, async (req, res) => {
     const data = await Menu.findAll();
     res.json(data);
 });
@@ -152,7 +209,7 @@ app.post('/api/logout', (req, res) => {
 });
 
 // POST: Customers create orders
-app.post('/api/orders', async (req, res, next) => {
+app.post('/api/orders', requireAuth, requireCustomer,async (req, res, next) => {
     try {
         const { customerID, menuItemIDs } = req.body;
 
@@ -197,13 +254,13 @@ app.post('/api/orders', async (req, res, next) => {
             status: newOrder.order_status
         });
 
-    } catch (err) { // Return error if order was not created
+    } catch (error) { // Return error if order was not created
         next(error);
     }
 });
 
 // POST: Owners create menu
-app.post('/api/menus', async (req, res, next) => {
+app.post('/api/menus', requireAuth, requireOwner, async (req, res, next) => {
     try {
         const { name, ingredients, description, price, restaurantID } = req.body;
 
@@ -230,7 +287,7 @@ app.post('/api/menus', async (req, res, next) => {
 });
 
 // POST: Admin creates a restaurant
-app.post('/api/restaurants', async (req, res, next) => {
+app.post('/api/restaurants', requireAuth, requireAdmin, async (req, res, next) => {
     try {
         const { name, address, food_type, phone } = req.body;
 
@@ -261,7 +318,7 @@ app.post('/api/restaurants', async (req, res, next) => {
 });
 
 // PUT: Users update their own profile
-app.put('/api/users/:id', async (req, res, next) => {
+app.put('/api/users/:id', requireAuth, async (req, res, next) => {
     try {
         const { id } = req.params;
         
@@ -312,7 +369,7 @@ app.put('/api/users/:id', async (req, res, next) => {
 });
 
 // PUT: Owners update their menu
-app.put('/api/menus/:id', async (req, res, next) => {
+app.put('/api/menus/:id', requireAuth,requireOwner,async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -350,7 +407,7 @@ app.put('/api/menus/:id', async (req, res, next) => {
 });
 
 // PUT: Owners update order(status and estimated delivery time)
-app.put('/api/orders/:id', async (req, res, next) => {
+app.put('/api/orders/:id', requireAuth, requireOwner, async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -386,7 +443,7 @@ app.put('/api/orders/:id', async (req, res, next) => {
 });
 
 // PUT: Owners update restaurant
-app.put('/api/restaurants/:id', async (req, res, next) => {
+app.put('/api/restaurants/:id', requireAuth,requireOwner,async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -421,7 +478,7 @@ app.put('/api/restaurants/:id', async (req, res, next) => {
 
 
 // DELETE: Admin delete a user
-app.delete('/api/users/:id', async (req, res, next) => {
+app.delete('/api/users/:id', requireAuth,requireAdmin,async (req, res, next) => {
     try {
         //deleting a user according to the iput ID
         const deletedRowsCount = await Users.destroy({
@@ -441,7 +498,7 @@ app.delete('/api/users/:id', async (req, res, next) => {
 });
 
 // DELETE: Admin delete a restaurant
-app.delete('/api/restaurants/:id', async (req, res, next) => {
+app.delete('/api/restaurants/:id',requireAuth,requireAdmin, async (req, res, next) => {
     try {
         // Deleting a restaurant according tothe input ID
         const deletedRowsCount = await Restaurant.destroy({
@@ -461,7 +518,7 @@ app.delete('/api/restaurants/:id', async (req, res, next) => {
 });
 
 // DELETE: Owners deleting menu
-app.delete('/api/menus/:id', async (req, res, next) => {
+app.delete('/api/menus/:id',requireAuth,requireAdmin, async (req, res, next) => {
     try {
         // Delete menu according to the input ID
         const deletedRowsCount = await Menu.destroy({
@@ -488,7 +545,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Unexpected Error Occured: Action Failed", message: err.message });
   
 });
-
 
 // exproting module so that we can ue the function in different files
 module.exports = app;

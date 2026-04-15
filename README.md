@@ -29,6 +29,12 @@ npm install jsonwebtoken
 npm start
 ```
 
+for testing,you will do the following before starting the environment
+```
+npm install --save-dev jest
+npm test
+```
+
 once you run these, you will be in the server environment
 
 ### Deployment

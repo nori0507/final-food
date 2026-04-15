@@ -1,4 +1,5 @@
 const { db, Users, Restaurant, Menu, Order } = require('./setup');
+const bcrypt = require('bcryptjs');
 
 const seedDatabase = async () => {
     try {
@@ -6,11 +7,13 @@ const seedDatabase = async () => {
         await db.sync({ force: true });
         console.log('Database cleared and synced.');
 
+        const passwordHash = await bcrypt.hash('password123', 10);
+
         // Create Users (Admin, Owner, Customer)
         const admin = await Users.create({
             name: 'Admin Alice',
             email: 'admin@foodapp.com',
-            password: 'hashed_password_123', // In a real app, hash this!
+            password: passwordHash,
             bday: '1990-01-01',
             address: '123 Tech Lane',
             phone: 5550101,
@@ -21,7 +24,7 @@ const seedDatabase = async () => {
         const owner1 = await Users.create({
             name: 'Bob Burger',
             email: 'bob@burgers.com',
-            password: 'hashed_password_123',
+            password: passwordHash,
             bday: '1985-05-12',
             address: '456 Grill St',
             phone: 5550202,
@@ -32,7 +35,7 @@ const seedDatabase = async () => {
         const owner2 = await Users.create({
             name: 'Miyu Sushi',
             email: 'miyu@sushi.com',
-            password: 'hashed_password_456',
+            password: passwordHash,
             bday: '1992-03-15',
             address: '321 Rice Road',
             phone: 5550808,
@@ -43,7 +46,7 @@ const seedDatabase = async () => {
         const customer = await Users.create({
             name: 'Charlie Hungry',
             email: 'charlie@gmail.com',
-            password: 'hashed_password_123',
+            password: passwordHash,
             bday: '2000-10-20',
             address: '789 Apartment Ave',
             phone: 5550303,

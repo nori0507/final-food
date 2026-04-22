@@ -53,7 +53,7 @@ once you run these, you will be in the server environment
     * **NODE_ENV**: production
     * **JWT_SECRET**: your-secure-jwt-secret-key
     * **JWT_EXPIRES_IN**: 24h
-    * **DB_NAME**: blog.db
+    * **DB_NAME**: models.db
 * Click Deploy Web Service.
 * Look for a "Your service is live" message. 
 

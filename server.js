@@ -568,6 +568,12 @@ app.delete('/api/menus/:id',requireAuth,requireOwner, async (req, res, next) => 
     }
 });
 
+
+// message that will appear after deployment
+app.get('/', (req, res) => {
+  res.send('Final Food API is running');
+});
+
 // Middleware for uexpected errors
 app.use((err, req, res, next) => {
   // Highlight error

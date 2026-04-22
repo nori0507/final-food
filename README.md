@@ -46,14 +46,17 @@ once you run these, you will be in the server environment
     * **Region**: Select the region picked for you
     * **Branch**: main
     * **Root Directory**: Leave blank
-    * **Build Command**: npm install
+    * **Build Command**: npm install && npm run setup && npm run seed
     * **Start Command**: npm start
 * Once you have configured the settings, you need to pick your instance type. 
 * Set Environment Variables
     * **NODE_ENV**: production
+    * **DB_TYPE**: sqlite
     * **JWT_SECRET**: your-secure-jwt-secret-key
     * **JWT_EXPIRES_IN**: 24h
     * **DB_NAME**: models.db
+    * **PORT**: 3000
+    * **NODE_VERSION**: 18
 * Click Deploy Web Service.
 * Look for a "Your service is live" message. 
 

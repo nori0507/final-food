@@ -76,7 +76,7 @@ once you run these, you will be in the server environment
 * **DELETE /api/menus/:id** - only owners can delete ther menus
 
 ### Postman Documentation
-[Click here for Postman Docs for MVP](https://documenter.getpostman.com/view/52110882/2sBXiokVCK)
+[Click here for Postman Docs for MVP](https://documenter.getpostman.com/view/52110882/2sBXqFNhc1)
 
 ## Authentication guide
 There are three main user roles in this API. Every user can see the restaurants and menu. Customer can place orders, and update their own account information. Owners can manage their own restaurant information, including updating restaurant details and modifying menu items. They can also update the order status such as whether it is in the process ofr preparing or already delivered. Admins can create restaurants, and delete users and restaurants.

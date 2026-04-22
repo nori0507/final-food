@@ -10,7 +10,8 @@
     "test": "jest --runInBand --detectOpenHandles",
     "start": "node server.js",
     "setup": "node database/setup.js",
-    "seed": "node database/seed.js"
+    "seed": "node database/seed.js",
+    "postinstall": "npm rebuild sqlite3 --build-from-source"
   },
   "repository": {
     "type": "git",

@@ -328,6 +328,11 @@ app.put('/api/users/:id', requireAuth, async (req, res, next) => {
             return res.status(404).json({ error: "User not found" });
         }
 
+        // check if the user Id input and loggined user ID mathces
+        if (parseInt(id) !== req.user.id) {
+            return res.status(403).json({ error: "Forbidden: You can only update your own profile." });
+        }
+
         // Get the data from the request body
         let dataToUpdate = { ...req.body };
 
@@ -379,6 +384,13 @@ app.put('/api/menus/:id', requireAuth,requireOwner,async (req, res, next) => {
             return res.status(404).json({ error: "Menu not found" });
         }
 
+        // CHeck is the owner's restaurant id and input restaurant ID matches
+        const restaurant = await Restaurant.findByPk(menuItem.restaurantID); 
+        const isOwner = Number(restaurant.ownerID) === Number(req.user.usersID || req.user.id);
+        if (!restaurant || !isOwner) {
+            return res.status(403).json({ error: "Forbidden: You do not own the restaurant for this menu item." });
+        }
+
         // Prepare the update data from the request body
         let dataToUpdate = { ...req.body };
 
@@ -417,6 +429,15 @@ app.put('/api/orders/:id', requireAuth, requireOwner, async (req, res, next) => 
             return res.status(404).json({ error: "Order not found" });
         }
 
+        // check if the the order belongs to the restaurant that the owner owns
+        const restaurant = await Restaurant.findByPk(order.restaurantID);
+        const isTheRestaurantOwner = (Number(restaurant.ownerID) === Number(req.user.id));
+        if (!isTheRestaurantOwner) {
+            return res.status(403).json({ 
+                error: "Forbidden: You do not own this restaurant." 
+            });
+        }
+
         // Extract only the fields the owner is allowed to change
         const { status, estimated_time } = req.body;
 
@@ -451,6 +472,11 @@ app.put('/api/restaurants/:id', requireAuth,requireOwner,async (req, res, next) 
         const restaurant = await Restaurant.findByPk(id);
         if (!restaurant) {
             return res.status(404).json({ error: "Restaurant not found" });
+        }
+
+        // check if the user is the owner of this restaurant or not
+        if (restaurant.ownerId !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({ error: "Forbidden: You do not own this restaurant." });
         }
 
         const dataToUpdate = { ...req.body };
@@ -518,19 +544,24 @@ app.delete('/api/restaurants/:id',requireAuth,requireAdmin, async (req, res, nex
 });
 
 // DELETE: Owners deleting menu
-app.delete('/api/menus/:id',requireAuth,requireAdmin, async (req, res, next) => {
+app.delete('/api/menus/:id',requireAuth,requireOwner, async (req, res, next) => {
     try {
-        // Delete menu according to the input ID
-        const deletedRowsCount = await Menu.destroy({
-            where: { menuID: req.params.id }
-        });
-        
-        // Return erro when ID did not exist
-        if (deletedRowsCount === 0) {
+        const { id } = req.params;
+        // Find the item so menuItem is defined and we can check its restaurant
+        const menuItem = await Menu.findByPk(id);
+
+        // return error when menu was not found
+        if (!menuItem) {
             return res.status(404).json({ error: 'Menu item not found' });
         }
-        
-        // Success
+
+        // Check if the owner is the owner for the restaurant that the menu belongs to
+        const restaurant = await Restaurant.findByPk(menuItem.restaurantID);
+        if (!restaurant || (Number(restaurant.ownerID) !== Number(req.user.id))) {
+            return res.status(403).json({ error: "Forbidden: You do not own the restaurant this menu belongs to." });
+        }
+
+        await menuItem.destroy();
         res.json({ message: 'Menu item deleted successfully' });
     } catch (error) { // Return error when the delete did not happens
        next(error);

@@ -2,7 +2,7 @@
 final project for backend development course
 
 ## Project description and purpose
-I will build a restaurant and food ordering REST API. By using this API, customers can search for restaurants, view menus, and order food for delivery. In this way, people can order food without visiting restaurants, and this could save them a lot of time. Moreover, they can compare varieties of restaurants and choose the best one for themselves. My goal is to create a REST API that is like a simple version of Uber Eats and DoorDash. This API can be used by customers, owners, and admins. I'm interested in this project because I love eating and want to work on a food and restaurant management project. 
+I will build a restaurant and food ordering REST API. By using this API, customers can search for restaurants, view menus, and order food for delivery. In this way, people can order food without visiting restaurants, and this could save them a lot of time. Moreover, they can compare varieties of restaurants and choose the best one for themselves. My goal is to create a REST API that is like a simple version of Uber Eats and DoorDash. This API can be used by customers, owners, and admins. Some characteristics that are different from the real application such as Uber Eats are the followings: No real payments (just mock), Simplified status onlyfor delivery status, and No real-time updates. I'm interested in this project because I love eating and want to work on a food and restaurant management project. 
 This project will store several types of data. The first one is Users, where information about the user is stored, including user ID, birthdate, address, name, phone number, password, debit card number, and email. It also has labels "customer," "owner," and "admin." In this way, we can create authorization based on their roles. The second one is Restaurant, where information about the restaurant is stored; the information can be owner ID (links to the Users table), restaurant ID, restaurant name, address, types of food it serves, and phone number. The third one is Menu, where information about the menu is stored: menu ID, restaurant ID (links to the Restaurant table), name, ingredients, description, and price. The fourth one is Order, where information about the order is stored, including the order ID, restaurant ID (links to the Restaurant table), customer ID (links to the Customers table), menu ID (links to the Menu table), the order status, and estimated delivery times. 
 
 
@@ -38,7 +38,25 @@ npm test
 once you run these, you will be in the server environment
 
 ### Deployment
-deployement instruction will be added at the final code submission
+* Going to the Render Homepage
+* From your Render dashboard, click "New" and select "Web Service"
+* Once you select the repository that you want to deploy, you should configure the following setting exactly:
+    * **Name**: blog-api-demo (or another preferred name)
+    * **Environment**: Node
+    * **Region**: Select the region picked for you
+    * **Branch**: main
+    * **Root Directory**: Leave blank
+    * **Build Command**: npm install
+    * **Start Command**: npm start
+* Once you have configured the settings, you need to pick your instance type. 
+* Set Environment Variables
+    * **NODE_ENV**: production
+    * **JWT_SECRET**: your-secure-jwt-secret-key
+    * **JWT_EXPIRES_IN**: 24h
+    * **DB_NAME**: blog.db
+* Click Deploy Web Service.
+* Look for a "Your service is live" message. 
+
 
 ## API endpoint documentation
 ### Main end points with explanation
@@ -58,9 +76,7 @@ deployement instruction will be added at the final code submission
 [Click here for Postman Docs for MVP](https://documenter.getpostman.com/view/52110882/2sBXiokVCK)
 
 ## Authentication guide
-There are three main user roles in this API. A customer can see restaurants and menus, place orders, and update their own account information. An owner can manage their own restaurant, including updating restaurant details and modifying menu items. An admin has full access to all data and can create, update, or delete any resource in the system because they are the ones who manage this whole system. 
-
-I will update this after my final code is created
+There are three main user roles in this API. Every user can see the restaurants and menu. Customer can place orders, and update their own account information. Owners can manage their own restaurant information, including updating restaurant details and modifying menu items. They can also update the order status such as whether it is in the process ofr preparing or already delivered. Admins can create restaurants, and delete users and restaurants.
 
 ## Future improvements or stretch goals
-I will add this after my final code is formed
+I would say splitting endpoints into different files, because the server.js file has a long code. One of my peers suggested to do so, but I could not figure ou how to manage it. So I will need to learn skills for it. 
